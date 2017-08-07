@@ -31,10 +31,16 @@ static Buffer *m_graphics_screen;
 
 static void resetVideoMode(void) {
   /* Reset video mode */
+  const SDL_VideoInfo* info = SDL_GetVideoInfo();
+  if(!info) CERROR("video query failed: %s", SDL_GetError());
   int flags = (m_graphics_fullscreen ? SDL_FULLSCREEN : 0) |
               (m_graphics_resizable  ? SDL_RESIZABLE : 0)  |
               (m_graphics_borderless ? SDL_NOFRAME : 0) | SDL_DOUBLEBUF;
-  if (SDL_SetVideoMode(m_graphics_screenWidth, m_graphics_screenHeight, 32, flags) == NULL) {
+  if (m_graphics_fullscreen) {
+    m_graphics_screenWidth = info->current_w;
+    m_graphics_screenHeight = info->current_h;
+  }
+  if (SDL_SetVideoMode(m_graphics_screenWidth, m_graphics_screenHeight, info->vfmt->BitsPerPixel, flags) == NULL) {
     CERROR("could not set video mode");
   }
   /* Reset screen buffer */
@@ -101,16 +107,18 @@ int graphics_setSize(int width, int height) {
   width = opt_number(width, m_graphics_screenWidth);
   height = opt_number(height, m_graphics_screenHeight);
   /* Reset video mode and set new screen size*/
+  const SDL_VideoInfo* info = SDL_GetVideoInfo();
+  if(!info) CERROR("video query failed: %s", SDL_GetError());
   int flags = (m_graphics_fullscreen ? SDL_FULLSCREEN : 0) |
               (m_graphics_resizable  ? SDL_RESIZABLE : 0)  |
               (m_graphics_borderless ? SDL_NOFRAME : 0) | SDL_DOUBLEBUF;
-  if (SDL_SetVideoMode(width, height, 32, flags) == NULL) {
+  if (SDL_SetVideoMode(width, height, info->vfmt->BitsPerPixel, flags) == NULL) {
     CERROR("could not set resize screen");
   }
   /* Reset screen buffer */
   if (m_graphics_screen) {
     sr_Buffer *b = m_graphics_screen->buffer;
-    b->pixels = (void*) SDL_GetVideoSurface()->pixels;
+    b->pixels = (void *) SDL_GetVideoSurface()->pixels;
     b->w = width;
     b->h = height;
     sr_setClip(b, sr_rect(0, 0, b->w, b->h));
