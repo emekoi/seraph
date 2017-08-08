@@ -11,19 +11,20 @@
 
 #include <SDL2/SDL.h>
 #include "m_buffer.h"
-#include "m_system.h"
 
 SDL_Window *m_graphics_window;
 SDL_Renderer *m_graphics_renderer;
-SDL_Texture *m_graphics_texture;
+SDL_Surface *m_graphics_surface;
+Buffer *m_graphics_screen;
+
 int m_graphics_screenWidth;
 int m_graphics_screenHeight;
+int m_graphics_maxFps;
 
-Buffer *graphics_init(int width, int height, char *title, int fullscreen, int resizable, int borderless);
+void graphics_init(int width, int height, char *title, int fullscreen);
 int graphics_clear(void);
 sr_Pixel graphics_getClearColor(void);
 int graphics_setClearColor(sr_Pixel color);
-int graphics_setSize(int width, int height);
 int graphics_setFullscreen(int b);
 int graphics_getFullscreen(void);
 int graphics_setMaxFps(int fps);

@@ -29,25 +29,13 @@ void zfree(void *ptr) {
 
 
 int opt_number(int x, int y) {
-  if (x) {
-    return x;
-  } else {
-    return y;
-  }
+  if (x) return x; else return y;
 }
 
 char *opt_string(char *x, char *y) {
-  if (x) return x;
-  else return y;
+  if (x) return x; else return y;
 }
 
 int round_int(double x) {
   return x >= 0 ? floor(x + .5) : ceil(x - .5);
-}
-
-
-int buffer_drawText(Buffer *self, Font *font, const char *str, double x, double y, double sx, double sy) {
-  Buffer *txt = font_render(font, str);
-  buffer_drawBuffer(self, txt, x, y - (sy * 2) - 2, RECT(txt), 0, sx, sy, 0, 0);
-  return 0;
 }

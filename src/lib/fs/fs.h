@@ -9,10 +9,12 @@
 #ifndef FS_H
 #define FS_H
 
+#include <stddef.h>
+
 #define fs_error(err) do { \
   if (err != FS_ESUCCESS) { \
-    fprintf(stderr, "%s[ERROR %s]:%s %s:%d: %s(): %s\n", color_red, __TIME__, \
-    color_reset, __FILE__, __LINE__, __func__, fs_errorStr(err)); \
+    fprintf(stderr, "[ERROR %s]: %s:%d: %s(): %s\n", __TIME__, \
+    __FILE__, __LINE__, __func__, fs_errorStr(err)); \
     exit(EXIT_FAILURE); \
   } \
 } while(0);

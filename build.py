@@ -14,7 +14,7 @@ SOURCE = [
   "src/lib/sera/*.c",
 ]
 
-FLAGS = [ "-Wall", "-Wextra", "--std=c99", "-fno-strict-aliasing", "-Wno-unused-function", "-Wno-unused-parameter" ]
+FLAGS = [ "-Wall", "-Wextra", "--std=c99", "-fno-strict-aliasing", "-Wno-unused-function", "-Wno-misleading-indentation", "-Wno-unused-parameter" ]
 LINK = [ "m" ]
 DEFINE = [ ]
 EXTRA = ""

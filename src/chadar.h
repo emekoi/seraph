@@ -17,20 +17,12 @@
 #include "m_font.h"
 #include "m_time.h"
 #include "m_buffer.h"
-#include "m_system.h"
 #include "m_graphics.h"
-#include "m_keyboard.h"
 
 void __init(void);
-
-void onStepMain(void);
-void __update(void);
 void __draw(void);
 
-
 void onInit();
-void onUpdate(double dt);
 void onDraw();
-void onQuit();
 
 #endif
