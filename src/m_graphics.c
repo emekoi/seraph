@@ -40,7 +40,6 @@ static void resetVideoMode(void) {
   /* Reset screen buffer */
   if (m_graphics_screen) {
     sr_Buffer *b = m_graphics_screen->buffer;
-    b->pixels = (void *)SDL_GetWindowSurface(m_graphics_window)->pixels;
     b->w = m_graphics_screenWidth;
     b->h = m_graphics_screenHeight;
     sr_setClip(b, sr_rect(0, 0, b->w, b->h));
@@ -72,9 +71,7 @@ Buffer *graphics_init(int w, int h, char *title, int fullscreen, int resizable, 
   m_graphics_texture = SDL_CreateTexture(m_graphics_renderer, SDL_PIXELFORMAT_RGBA8888,
     SDL_TEXTUREACCESS_STREAMING, m_graphics_screenWidth, m_graphics_screenHeight);
   /* Create, store in registry and return main screen buffer */
-  m_graphics_screen = buffer_new();
-  m_graphics_screen->buffer = sr_newBufferShared(
-    SDL_GetWindowSurface(m_graphics_window)->pixels, m_graphics_screenWidth, m_graphics_screenHeight);
+  m_graphics_screen = buffer_fromBlank(m_graphics_screenWidth, m_graphics_screenHeight);
   /* Set state */
   m_graphics_inited = 1;
   return m_graphics_screen;
