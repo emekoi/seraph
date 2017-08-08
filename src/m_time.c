@@ -13,7 +13,7 @@
 #else
   #include <sys/time.h>
 #endif
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 static double last = 0;
 static double delta = 0;

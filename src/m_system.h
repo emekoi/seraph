@@ -9,7 +9,7 @@
 #ifndef M_SYSTEM_H
 #define M_SYSTEM_H
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "util.h"
 
 enum {

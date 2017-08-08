@@ -9,7 +9,7 @@
 #ifndef M_KEYBOARD_H
 #define M_KEYBOARD_H
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "m_system.h"
 
 void __keyboard_open(void);

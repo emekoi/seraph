@@ -9,8 +9,15 @@
 #ifndef M_GRAPHICS_H
 #define M_GRAPHICS_H
 
+#include <SDL2/SDL.h>
 #include "m_buffer.h"
 #include "m_system.h"
+
+SDL_Window *m_graphics_window;
+SDL_Renderer *m_graphics_renderer;
+SDL_Texture *m_graphics_texture;
+int m_graphics_screenWidth;
+int m_graphics_screenHeight;
 
 Buffer *graphics_init(int width, int height, char *title, int fullscreen, int resizable, int borderless);
 int graphics_clear(void);

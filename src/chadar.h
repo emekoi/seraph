@@ -9,7 +9,7 @@
 #ifndef M_CHADER_H
 #define M_CHADER_H
 
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 
 #include "util.h"
 #include "lib/fs/fs.h"

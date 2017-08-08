@@ -10,17 +10,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <float.h>
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #include "lib/sera/sera.h"
 #include "util.h"
 #include "m_buffer.h"
 #include "m_graphics.h"
 
-int m_graphics_maxFps = 60.;
+int m_graphics_maxFps = 60;
 
 static int m_graphics_inited = 0;
-static int m_graphics_screenWidth = 0;
-static int m_graphics_screenHeight = 0;
 static int m_graphics_fullscreen = 0;
 static int m_graphics_resizable = 0;
 static int m_graphics_borderless = 0;
@@ -31,22 +29,18 @@ static Buffer *m_graphics_screen;
 
 static void resetVideoMode(void) {
   /* Reset video mode */
-  const SDL_VideoInfo* info = SDL_GetVideoInfo();
-  if(!info) CERROR("video query failed: %s", SDL_GetError());
-  int flags = (m_graphics_fullscreen ? SDL_FULLSCREEN : 0) |
-              (m_graphics_resizable  ? SDL_RESIZABLE : 0)  |
-              (m_graphics_borderless ? SDL_NOFRAME : 0) | SDL_DOUBLEBUF;
-  if (m_graphics_fullscreen) {
-    m_graphics_screenWidth = info->current_w;
-    m_graphics_screenHeight = info->current_h;
-  }
-  if (SDL_SetVideoMode(m_graphics_screenWidth, m_graphics_screenHeight, info->vfmt->BitsPerPixel, flags) == NULL) {
-    CERROR("could not set video mode");
-  }
+  int flags = (m_graphics_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) |
+              (m_graphics_resizable  ? SDL_WINDOW_RESIZABLE : 0)  |
+              (m_graphics_borderless ? SDL_WINDOW_BORDERLESS : 0) | SDL_WINDOW_OPENGL;
+
+  SDL_CreateWindowAndRenderer(m_graphics_screenWidth,
+    m_graphics_screenHeight, flags, &m_graphics_window, &m_graphics_renderer);
+  if (!m_graphics_window || !m_graphics_renderer) CERROR("create window or renderer");
+
   /* Reset screen buffer */
   if (m_graphics_screen) {
     sr_Buffer *b = m_graphics_screen->buffer;
-    b->pixels = (void*) SDL_GetVideoSurface()->pixels;
+    b->pixels = (void *)SDL_GetWindowSurface(m_graphics_window)->pixels;
     b->w = m_graphics_screenWidth;
     b->h = m_graphics_screenHeight;
     sr_setClip(b, sr_rect(0, 0, b->w, b->h));
@@ -72,13 +66,15 @@ Buffer *graphics_init(int w, int h, char *title, int fullscreen, int resizable, 
 
   /* Required to get the associated character when a key is pressed. This has
    * to be enabled *after* SDL video is set up */
-  SDL_EnableUNICODE(1);
+  // SDL_EnableUNICODE(1);
   /* Init window title */
-  SDL_WM_SetCaption(m_graphics_title, m_graphics_title);
+  SDL_SetWindowTitle(m_graphics_window, m_graphics_title);
+  m_graphics_texture = SDL_CreateTexture(m_graphics_renderer, SDL_PIXELFORMAT_RGBA8888,
+    SDL_TEXTUREACCESS_STREAMING, m_graphics_screenWidth, m_graphics_screenHeight);
   /* Create, store in registry and return main screen buffer */
   m_graphics_screen = buffer_new();
   m_graphics_screen->buffer = sr_newBufferShared(
-    SDL_GetVideoSurface()->pixels, m_graphics_screenWidth, m_graphics_screenHeight);
+    SDL_GetWindowSurface(m_graphics_window)->pixels, m_graphics_screenWidth, m_graphics_screenHeight);
   /* Set state */
   m_graphics_inited = 1;
   return m_graphics_screen;
@@ -106,23 +102,7 @@ int graphics_clear(void) {
 int graphics_setSize(int width, int height) {
   width = opt_number(width, m_graphics_screenWidth);
   height = opt_number(height, m_graphics_screenHeight);
-  /* Reset video mode and set new screen size*/
-  const SDL_VideoInfo* info = SDL_GetVideoInfo();
-  if(!info) CERROR("video query failed: %s", SDL_GetError());
-  int flags = (m_graphics_fullscreen ? SDL_FULLSCREEN : 0) |
-              (m_graphics_resizable  ? SDL_RESIZABLE : 0)  |
-              (m_graphics_borderless ? SDL_NOFRAME : 0) | SDL_DOUBLEBUF;
-  if (SDL_SetVideoMode(width, height, info->vfmt->BitsPerPixel, flags) == NULL) {
-    CERROR("could not set resize screen");
-  }
-  /* Reset screen buffer */
-  if (m_graphics_screen) {
-    sr_Buffer *b = m_graphics_screen->buffer;
-    b->pixels = (void *) SDL_GetVideoSurface()->pixels;
-    b->w = width;
-    b->h = height;
-    sr_setClip(b, sr_rect(0, 0, b->w, b->h));
-  }
+  resetVideoMode();
   return 0;
 }
 

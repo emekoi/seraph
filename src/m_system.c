@@ -21,34 +21,35 @@ void system_poll() {
         exit(EXIT_SUCCESS);
         break;
 
-      case SDL_VIDEORESIZE:
+      case SDL_WINDOWEVENT_SIZE_CHANGED:
+      case SDL_WINDOWEVENT_RESIZED:
        event->type = RESIZE;
-       event->resize.width = e.resize.w;
-       event->resize.height = e.resize.h;
+       event->resize.width = e.window.data1;
+       event->resize.height = e.window.data2;
        __graphics_on_event(event);
        break;
 
-      case SDL_KEYDOWN: {
-        event->type = KEY_DOWN;
-        char *key = SDL_GetKeyName(e.key.keysym.sym);
-        event->keydown.key = zrealloc(event->keydown.key, sizeof(char) * strlen(key));
-        sprintf(event->keydown.key, "%s", key);
-        int c = keyChar(e.key.keysym.unicode);
-        if (c) {
-          event->keydown.chr = zrealloc(event->keydown.chr, sizeof(char));
-          sprintf(event->keydown.chr, "%c", c);
-        }
-        __keyboard_on_event(event);
-        break;
-      }
+      // case SDL_KEYDOWN: {
+      //   event->type = KEY_DOWN;
+      //   char *key = SDL_GetKeyName(e.key.keysym.sym);
+      //   event->keydown.key = zrealloc(event->keydown.key, sizeof(char) * strlen(key));
+      //   sprintf(event->keydown.key, "%s", key);
+      //   int c = keyChar(e.key.keysym.unicode);
+      //   if (c) {
+      //     event->keydown.chr = zrealloc(event->keydown.chr, sizeof(char));
+      //     sprintf(event->keydown.chr, "%c", c);
+      //   }
+      //   __keyboard_on_event(event);
+      //   break;
+      // }
 
-      case SDL_KEYUP:
-        event->type = KEY_UP;
-        char *key = SDL_GetKeyName(e.key.keysym.sym);
-        event->keyup.key = zrealloc(event->keyup.key, sizeof(char) * strlen(key));
-        sprintf(event->keyup.key, "%s", key);
-        __keyboard_on_event(event);
-        break;
+      // case SDL_KEYUP:
+      //   event->type = KEY_UP;
+      //   char *key = SDL_GetKeyName(e.key.keysym.sym);
+      //   event->keyup.key = zrealloc(event->keyup.key, sizeof(char) * strlen(key));
+      //   sprintf(event->keyup.key, "%s", key);
+      //   __keyboard_on_event(event);
+      //   break;
 
     }
   }

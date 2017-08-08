@@ -20,18 +20,19 @@ DEFINE = [ ]
 EXTRA = ""
 
 if platform.system() == "Windows":
+  sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
   OUTPUT += ".exe"
-  LINK += [ "mingw32", "SDLmain", "SDL" ]
+  LINK += [ "mingw32", "SDL2main", "SDL2" ]
   FLAGS += [ "-mwindows" ]
 
 if platform.system() == "Linux":
-  LINK += [ "SDLmain", "SDL" ]
+  LINK += [ "SDL2main", "SDL2" ]
 
 if platform.system() == "Darwin":
   LINK += [  ]
   FLAGS += [  ]
-  FLAGS += [ os.popen("sdl-config --cflags").read().strip() ]
-  EXTRA += os.popen("sdl-config --libs").read().strip()
+  FLAGS += [ os.popen("sdl2-config --cflags").read().strip() ]
+  EXTRA += os.popen("sdl2-config --libs").read().strip()
   DEFINE += [ "SR_MODE_ARGB" ]
 
 

@@ -78,7 +78,7 @@ void onStepMain(void) {
 void __init(void) {
   int width = 512, height = 512;
   int fullscreen = 0, resizable = 0, borderless = 0;
-  char *title = "chadar";
+  char *title = "seraph";
   SCREEN = graphics_init(width, height, title, fullscreen, resizable, borderless);
   graphics_setMaxFps(60);
   fs_error(fs_mount("data"));
@@ -89,16 +89,16 @@ void __init(void) {
 
 
 void __draw(void) {
-  // buffer_clear(SCREEN, 0.27058823529, 0, 0.42745098039, 1);
-  // buffer_reset(SCREEN);
   graphics_clear();
   onDraw();
   static double last = 0;
-  /* Flip -- this blocks on some platforms (OSX) */
-  SDL_Surface *screen = SDL_GetVideoSurface();
-  if (screen) {
-    SDL_Flip(screen);
-  }
+
+  sr_Buffer *buffer = SCREEN->buffer;
+  SDL_UpdateTexture(m_graphics_texture, NULL, buffer->pixels, m_graphics_screenWidth * sizeof(Uint32));
+  // SDL_SetRenderDrawColor(m_graphics_renderer, 0, 0, 0, 255);
+  SDL_RenderCopy(m_graphics_renderer, m_graphics_texture, NULL, NULL);
+  SDL_RenderClear(m_graphics_renderer);
+  SDL_RenderPresent(m_graphics_renderer);
 
   /* Wait for next frame */
   double step = (1. / m_graphics_maxFps);
