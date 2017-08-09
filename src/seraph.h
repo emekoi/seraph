@@ -14,8 +14,10 @@
 #include "util.h"
 
 #include "m_time.h"
-#include "m_graphics.h"
+#include "m_font.h"
 #include "m_system.h"
+#include "m_buffer.h"
+#include "m_graphics.h"
 
 void __init(void);
 void __draw(void);

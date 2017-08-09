@@ -1,11 +1,15 @@
 #!/usr/bin/python2.7
 import os, sys, shutil, platform, time
+import cembed
 
 OUTPUT = "bin/seraph"
+EMBED_DIR = "src/embed"
+TEMPSRC_DIR = ".tempsrc"
 COMPILER = "gcc"
-INCLUDE = [  ]
+INCLUDE = [ TEMPSRC_DIR ]
 SOURCE = [
   "src/*.c",
+  "src/lib/fs/*.c",
   "src/lib/sera/*.c",
 ]
 
@@ -37,6 +41,11 @@ def fmt(fmt, dic):
   return fmt
 
 
+def clearup():
+  if os.path.exists(TEMPSRC_DIR):
+    shutil.rmtree(TEMPSRC_DIR)
+
+
 def main():
   global FLAGS, SOURCE, LINK
 
@@ -55,10 +64,21 @@ def main():
 
   print "building (" + build + ")..."
 
+  # Make sure there arn't any temp files left over from a previous build
+  clearup()
+
   # Create directories
+  os.makedirs(TEMPSRC_DIR)
   outdir = os.path.dirname(OUTPUT)
   if not os.path.exists(outdir):
     os.makedirs(outdir)
+
+  # Create embedded-file header files
+  for filename in os.listdir(EMBED_DIR):
+    fullname = EMBED_DIR + "/" + filename
+    res = cembed.process(fullname)
+    open(TEMPSRC_DIR + "/" + cembed.safename(fullname) + ".h", "wb").write(res)
+
 
   # Build
   cmd = fmt(
@@ -85,6 +105,9 @@ def main():
     if os.path.isfile(os.path.dirname(OUTPUT)):
       print "stripping..."
       os.system("strip %s" % OUTPUT)
+
+  print "clearing up..."
+  clearup()
 
   if res == 0:
     print "done (%.2fs)" % (time.time() - starttime)

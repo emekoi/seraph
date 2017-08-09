@@ -10,7 +10,6 @@ INCLUDE = [ TEMPSRC_DIR ]
 SOURCE = [
   "src/*.c",
   "src/lib/fs/*.c",
-  "src/lib/map/*.c",
   "src/lib/sera/*.c",
 ]
 

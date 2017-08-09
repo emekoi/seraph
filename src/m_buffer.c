@@ -26,6 +26,16 @@ static int sr_BufferMemory(sr_Buffer *b, const void *data, int len) {
 
 
 
+sr_Buffer *sr_BufferFile(const char *filename) {
+  sr_Buffer *b = new_srBuffer(); size_t len;
+  void *data = fs_read(filename, &len);
+  if (!data) CERROR("could not open file '%s'", filename);
+  int err = sr_BufferMemory(b, data, len); free(data);
+  if (err) CERROR("could not load buffer");
+  return b;
+}
+
+
 sr_Buffer *sr_BufferString(const char *str) {
   size_t len = strlen(str);
   sr_Buffer *b = new_srBuffer();
@@ -36,8 +46,6 @@ sr_Buffer *sr_BufferString(const char *str) {
 
 
 sr_Buffer *sr_BufferBlank(int w, int h) {
-  if (w <= 0) CERROR("expected width greater than 0");
-  if (h <= 0) CERROR("expected height greater than 0");
   sr_Buffer *b = sr_newBuffer(w, h);
   sr_clear(b, sr_pixel(0, 0, 0, 0));
   if (!b) CERROR("could not create sr_Buffer");
