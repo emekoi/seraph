@@ -11,26 +11,24 @@
 #include <string.h>
 #include "chadar.h"
 
-Font *font;
-Buffer *hello;
-
+sr_Buffer *hello;
 
 void onInit() {
-  hello = buffer_fromFile("hello_world.png");
-  font = font_fromEmbedded(16);
+  hello = sr_BufferFile("hello_world.png");
   graphics_setClearColor(sr_pixel(69, 0, 109, 255));
 }
 
 void onDraw() {
-  buffer_reset(hello);
-  buffer_copyPixels(m_graphics_screen, hello, 0, 0, RECT(hello), 4, 4);
-  char buf[64];sprintf(buf, "%d", time_getFps());
-  buffer_drawText(m_graphics_screen, font, buf, 4, 4, 2, 2);
+  sr_reset(hello);
+  sr_Rect r = RECT(hello);
+  sr_Transform t = sr_transform(0, 0, 0, 0, 0);
+  sr_drawBuffer(hello, m_graphics_buffer, 0, 0, &r, &t);
+  char buf[64]; sprintf(buf, "%d", time_getFps());
 }
 
 void onQuit(void) {
-  buffer_gc(hello); fs_deinit();
-  buffer_gc(m_graphics_screen); font_gc(font);
+  sr_destroyBuffer(hello); fs_deinit();
+  sr_destroyBuffer(m_graphics_buffer);
   SDL_FreeSurface(m_graphics_surface);
   SDL_DestroyRenderer(m_graphics_renderer);
   SDL_DestroyWindow(m_graphics_window);
@@ -63,7 +61,7 @@ void __draw(void) {
   onDraw();
   static double last = 0;
 
-  // SDL_UpdateTexture(m_graphics_texture, NULL, m_graphics_surface->pixels, m_graphics_screenWidth * sizeof(Uint32));
+  // SDL_UpdateTexture(m_graphics_texture, NULL, m_graphics_surface->pixels, m_graphics_width * sizeof(Uint32));
   // SDL_SetRenderDrawColor(m_graphics_renderer, 0, 0, 0, 255);
   SDL_Texture *m_graphics_texture = SDL_CreateTextureFromSurface(m_graphics_renderer, m_graphics_surface);
   // SDL_RenderCopy(m_graphics_renderer, m_graphics_texture, NULL, NULL);

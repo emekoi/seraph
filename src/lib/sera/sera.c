@@ -101,11 +101,11 @@ sr_Pixel sr_color(int r, int g, int b) {
 }
 
 
-sr_Transform sr_transform(void) {
+sr_Transform sr_transform(float ox, float oy, float r, float sx, float sy) {
   sr_Transform t;
-  t.ox = t.oy = 0;
-  t.sx = t.sy = 1;
-  t.r = 0;
+  t.ox = ox; t.oy = oy;
+  t.sx = ox; t.sy = oy;
+  t.r = r;
   return t;
 }
 

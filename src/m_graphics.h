@@ -15,10 +15,10 @@
 SDL_Window *m_graphics_window;
 SDL_Renderer *m_graphics_renderer;
 SDL_Surface *m_graphics_surface;
-Buffer *m_graphics_screen;
+sr_Buffer *m_graphics_buffer;
 
-int m_graphics_screenWidth;
-int m_graphics_screenHeight;
+int m_graphics_width;
+int m_graphics_height;
 int m_graphics_maxFps;
 
 void graphics_init(int width, int height, char *title, int fullscreen);

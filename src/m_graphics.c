@@ -28,29 +28,39 @@ static void resetVideoMode(void) {
   /* Reset video mode */
   int flags = (m_graphics_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) | SDL_WINDOW_OPENGL;
 
-  SDL_CreateWindowAndRenderer(m_graphics_screenWidth,
-    m_graphics_screenHeight, flags, &m_graphics_window, &m_graphics_renderer);
+  SDL_CreateWindowAndRenderer(m_graphics_width,
+    m_graphics_height, flags, &m_graphics_window, &m_graphics_renderer);
   if (!m_graphics_window || !m_graphics_renderer) CERROR("failed to create window or renderer");
 
-  SDL_PixelFormat *fmt = SDL_GetWindowSurface(m_graphics_window)->format;
-  m_graphics_surface = SDL_CreateRGBSurface(0,
-    m_graphics_screenWidth, m_graphics_screenHeight, 32,
-    fmt->Rmask, fmt->Gmask, fmt->Bmask, fmt->Amask);
+  Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+  rmask = 0xff000000;
+  gmask = 0x00ff0000;
+  bmask = 0x0000ff00;
+  amask = 0x000000ff;
+#else
+  rmask = 0x000000ff;
+  gmask = 0x0000ff00;
+  bmask = 0x00ff0000;
+  amask = 0xff000000;
+#endif
+
+  m_graphics_surface = SDL_CreateRGBSurface(0, m_graphics_width,
+    m_graphics_height, 32, rmask, gmask, bmask, amask);
 
   /* Reset screen buffer */
-  if (m_graphics_screen) {
-    sr_Buffer *b = m_graphics_screen->buffer;
-    b->pixels = (void *)SDL_GetWindowSurface(m_graphics_window)->pixels;
-    b->w = m_graphics_screenWidth;
-    b->h = m_graphics_screenHeight;
-    sr_setClip(b, sr_rect(0, 0, b->w, b->h));
+  if (m_graphics_buffer) {
+    m_graphics_buffer->pixels = (void *)m_graphics_surface->pixels;
+    m_graphics_buffer->w = m_graphics_width;
+    m_graphics_buffer->h = m_graphics_height;
+    sr_setClip(m_graphics_buffer, RECT(m_graphics_buffer));
   }
 }
 
 
 void graphics_init(int w, int h, char *title, int fullscreen) {
-  m_graphics_screenWidth = w;
-  m_graphics_screenHeight = h;
+  m_graphics_width = w;
+  m_graphics_height = h;
   m_graphics_title = opt_string(title, "seraph");
   m_graphics_fullscreen = opt_number(fullscreen, 0);
   if (m_graphics_inited) {
@@ -62,14 +72,11 @@ void graphics_init(int w, int h, char *title, int fullscreen) {
   /* Init SDL video */
   resetVideoMode();
 
-  /* Required to get the associated character when a key is pressed. This has
-   * to be enabled *after* SDL video is set up */
-  // SDL_EnableUNICODE(1);
   /* Init window title */
   SDL_SetWindowTitle(m_graphics_window, m_graphics_title);
   /* Create, store in registry and return main screen buffer */
-  m_graphics_screen = buffer_new();
-  m_graphics_screen->buffer = sr_newBufferShared(m_graphics_surface->pixels, m_graphics_screenWidth, m_graphics_screenHeight);
+  m_graphics_buffer = sr_newBufferShared(m_graphics_surface->pixels,
+     m_graphics_width, m_graphics_height);
   /* Set state */
   m_graphics_inited = 1;
 }
@@ -87,15 +94,15 @@ sr_Pixel graphics_getClearColor(void) {
 
 
 int graphics_clear(void) {
-  buffer_reset(m_graphics_screen);
-  buffer_clear(m_graphics_screen, m_graphics_clearColor);
+  sr_reset(m_graphics_buffer);
+  sr_clear(m_graphics_buffer, m_graphics_clearColor);
   return 0;
 }
 
 
 int graphics_setSize(int width, int height) {
-  width = opt_number(width, m_graphics_screenWidth);
-  height = opt_number(height, m_graphics_screenHeight);
+  m_graphics_width = opt_number(width, m_graphics_width);
+  m_graphics_height = opt_number(height, m_graphics_height);
   resetVideoMode();
   return 0;
 }

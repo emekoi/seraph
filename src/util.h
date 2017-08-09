@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "m_buffer.h"
-#include "m_font.h"
 
 #define ASSERT(cond, ...) do { \
   if (!(cond)) { \
@@ -35,7 +34,8 @@
 #define MAX(a, b)       ((b) > (a) ? (b) : (a))
 #define CLAMP(x, a, b)  (MAX(a, MIN(x, b)))
 #define LERP(a, b, p)   ((a) + ((b) - (a)) * (p))
-#define RECT(b) sr_rect(0, 0, buffer_getWidth(b), buffer_getHeight(b))
+
+#define RECT(b) sr_rect(0, 0, sr_BufferWidth(b), sr_BufferHeight(b))
 
 void *zrealloc(void *ptr, size_t size);
 void zfree(void *ptr);

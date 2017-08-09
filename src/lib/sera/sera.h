@@ -1,4 +1,4 @@
-/** 
+/**
  * Copyright (c) 2015 rxi
  *
  * This library is free software; you can redistribute it and/or modify it
@@ -72,7 +72,7 @@ enum {
 
 sr_Pixel sr_pixel(int r, int g, int b, int a);
 sr_Pixel sr_color(int r, int g, int b);
-sr_Transform sr_transform(void);
+sr_Transform sr_transform(float ox, float oy, float r, float sx, float sy);
 sr_Rect sr_rect(int x, int y, int w, int h);
 
 sr_Buffer *sr_newBuffer(int w, int h);
