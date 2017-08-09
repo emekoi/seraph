@@ -11,23 +11,15 @@
 #include <string.h>
 #include "chadar.h"
 
-sr_Buffer *hello;
-
 void onInit() {
-  hello = sr_BufferFile("hello_world.png");
   graphics_setClearColor(sr_pixel(69, 0, 109, 255));
 }
 
 void onDraw() {
-  sr_reset(hello);
-  sr_Rect r = RECT(hello);
-  sr_Transform t = sr_transform(0, 0, 0, 0, 0);
-  sr_drawBuffer(hello, m_graphics_buffer, 0, 0, &r, &t);
-  char buf[64]; sprintf(buf, "%d", time_getFps());
+  sr_drawBox(m_graphics_buffer, sr_color(255, 34, 25), 24, 23, 64, 64);
 }
 
 void onQuit(void) {
-  sr_destroyBuffer(hello); fs_deinit();
   sr_destroyBuffer(m_graphics_buffer);
   SDL_FreeSurface(m_graphics_surface);
   SDL_DestroyRenderer(m_graphics_renderer);
@@ -51,8 +43,6 @@ void __init(void) {
   int width = 512, height = 512;
   graphics_init(width, height, "seraph", 0);
   graphics_setMaxFps(60);
-  fs_error(fs_mount("data"));
-  fs_error(fs_setWritePath("data"));
   onInit();
 }
 

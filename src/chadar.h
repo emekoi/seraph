@@ -12,7 +12,6 @@
 #include <SDL2/SDL.h>
 
 #include "util.h"
-#include "lib/fs/fs.h"
 
 #include "m_time.h"
 #include "m_buffer.h"
