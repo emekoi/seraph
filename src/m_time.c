@@ -5,6 +5,7 @@
  * under the terms of the MIT license. See LICENSE for details.
  */
 
+#include <SDL2/SDL.h>
 #include <math.h>
 #include "m_time.h"
 
@@ -13,14 +14,13 @@
 #else
   #include <sys/time.h>
 #endif
-#include <SDL2/SDL.h>
 
-static double last = 0;
-static double delta = 0;
-static double average = 0;
-static double avgTimer = 0;
-static double avgAcc = 1;
-static double avgCount = 1;
+static double m_time_last = 0;
+static double m_time_delta = 0;
+static double m_time_average = 0;
+static double m_time_avgTimer = 0;
+static double m_time_avgAcc = 1;
+static double m_time_avgCount = 1;
 
 
 int time_getNow(void) {
@@ -52,32 +52,32 @@ int time_sleep(int t) {
 
 void time_step(void) {
   int now = time_getTime();
-  if (last == 0) last = now;
-  delta = now - last;
-  last = now;
-  avgTimer -= delta;
-  avgAcc += delta;
-  avgCount += 1;;
-  if (avgTimer <= 0) {
-    average = avgAcc / avgCount;
-    avgTimer = avgTimer + 1;
-    avgCount = 0;
-    avgAcc = 0;
+  if (m_time_last == 0) m_time_last = now;
+  m_time_delta = now - m_time_last;
+  m_time_last = now;
+  m_time_avgTimer -= m_time_delta;
+  m_time_avgAcc += m_time_delta;
+  m_time_avgCount += 1;;
+  if (m_time_avgTimer <= 0) {
+    m_time_average = m_time_avgAcc / m_time_avgCount;
+    m_time_avgTimer = m_time_avgTimer + 1;
+    m_time_avgCount = 0;
+    m_time_avgAcc = 0;
   }
 }
 
 
-double time_getDelta(void) {
-  return delta;
+double time_get_delta(void) {
+  return m_time_delta;
 }
 
 
 
-double time_getAverage(void){
-  return average;
+double time_get_average(void){
+  return m_time_average;
 }
 
 
 int time_getFps(void){
-  return floor(1 / average + .5);
+  return floor(1 / m_time_average + .5);
 }

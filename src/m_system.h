@@ -6,21 +6,12 @@
  */
 
 
-#ifndef M_CHADER_H
-#define M_CHADER_H
+#ifndef M_SYSTEM_H
+#define M_SYSTEM_H
 
 #include <SDL2/SDL.h>
-
 #include "util.h"
 
-#include "m_time.h"
-#include "m_buffer.h"
-#include "m_graphics.h"
-
-void __init(void);
-void __draw(void);
-
-void onInit();
-void onDraw();
+void system_poll();
 
 #endif

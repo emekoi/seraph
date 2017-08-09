@@ -10,19 +10,19 @@
 #define M_GRAPHICS_H
 
 #include <SDL2/SDL.h>
-#include "m_buffer.h"
+#include "lib/sera/sera.h"
 
 SDL_Window *m_graphics_window;
-SDL_Renderer *m_graphics_renderer;
-SDL_Surface *m_graphics_surface;
+SDL_Renderer *m_graphics_renderer; 
 sr_Buffer *m_graphics_buffer;
 
 int m_graphics_width;
 int m_graphics_height;
 int m_graphics_maxFps;
 
-void graphics_init(int width, int height, char *title, int fullscreen);
+void graphics_init(int w, int h, char *title, int fullscreen, int resizable);
 int graphics_clear(void);
+int graphics_setSize(int width, int height);
 sr_Pixel graphics_getClearColor(void);
 int graphics_setClearColor(sr_Pixel color);
 int graphics_setFullscreen(int b);

@@ -11,7 +11,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "m_buffer.h"
 
 #define ASSERT(cond, ...) do { \
   if (!(cond)) { \
@@ -36,6 +35,9 @@
 #define LERP(a, b, p)   ((a) + ((b) - (a)) * (p))
 
 #define RECT(b) sr_rect(0, 0, sr_BufferWidth(b), sr_BufferHeight(b))
+
+#define sr_BufferWidth(b) b->w
+#define sr_BufferHeight(b) b->h
 
 void *zrealloc(void *ptr, size_t size);
 void zfree(void *ptr);
