@@ -27,7 +27,7 @@ static sr_Pixel m_graphics_clearColor;
 static void resetVideoMode(void) {
   /* Reset video mode */
   int flags = (m_graphics_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) |
-              (m_graphics_resizable  ? SDL_WINDOW_RESIZABLE : 0);
+              (m_graphics_resizable  ? SDL_WINDOW_RESIZABLE : 0) | SDL_WINDOW_OPENGL;
 
   m_graphics_window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                         m_graphics_width, m_graphics_height, flags);

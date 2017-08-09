@@ -223,15 +223,15 @@ ttf_Font *font_fromString(const char *data, int fontsize) {
 }
 
 
-// ttf_Font *font_fromEmbedded(int fontsize) {
-//   #include "default_ttf.h"
-//   fontsize = opt_number(fontsize, DEFAULT_FONTSIZE);
-//   ttf_Font *font = newFont();
-//   const char *err = loadFontFromMemory(font, default_ttf, sizeof(default_ttf),
-//                                        fontsize);
-//   if (err) CERROR("%s", err);
-//   return font;
-// }
+ttf_Font *font_fromEmbedded(int fontsize) {
+  #include "default_ttf.h"
+  fontsize = opt_number(fontsize, DEFAULT_FONTSIZE);
+  ttf_Font *font = newFont();
+  const char *err = loadFontFromMemory(font, default_ttf, sizeof(default_ttf),
+                                       fontsize);
+  if (err) CERROR("%s", err);
+  return font;
+}
 
 
 sr_Buffer *font_render(ttf_Font *font, const char *str) {
