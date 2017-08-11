@@ -23,13 +23,13 @@ Uint32 pxfmt = SDL_PIXELFORMAT_BGRA32;
 #endif
 
 float bx = 0, by = 0;
-ttf_Font *font;
+Font *font;
 sr_Buffer *hello;
 
 void onInit() {
   // hello = sr_BufferBlank(512, 512);
   hello = sr_BufferFile("hello_world.png");
-  font = font_fromEmbedded(16);
+  font = font_fromEmbedded(32);
   graphics_setClearColor(sr_color(69, 0, 109));
 }
 
@@ -37,20 +37,24 @@ void onDraw() {
   sr_Rect r = RECT(hello);
   sr_Transform t = sr_transform(0, 0, 0, 0, 0);
   sr_drawBox(hello, sr_color(3, 43, 56), 0, 4, 230, 230);
-  sr_copyPixels(m_graphics_buffer, hello, 0, 0, &r, 4, 4);
-  char buf[64]; sprintf(buf, "%d", time_getFps());
-  sr_DrawText(m_graphics_buffer, font, buf, 4, 4, &t);
+  // sr_copyPixels(m_graphics_buffer, hello, 0, 0, &r, 4, 4);
+  sr_reset(m_graphics_buffer);
+  char buf[64]; sprintf(buf, "%d FPS", time_getFps());
+  sr_DrawText(m_graphics_buffer, font, buf, 64, 64, &t);
 }
 
 void onQuit(void) {
   sr_destroyBuffer(m_graphics_buffer);
-  sr_destroyBuffer(hello); // ttf_destroy(font);
+  sr_destroyBuffer(hello); font_gc(font);
   SDL_DestroyRenderer(m_graphics_renderer);
   SDL_DestroyWindow(m_graphics_window);
   SDL_Quit(); fs_deinit();
 }
 
 int main(int argc, char **argv) {
+  #if _WIN32
+    setvbuf(stdout, NULL, _IONBF, BUFSIZ);
+  #endif
   atexit(onQuit);
   __init();
 
@@ -76,6 +80,7 @@ void __draw(void) {
   onDraw();
 
   sr_Buffer *b = m_graphics_buffer;
+  // b = font_render(font, "HELLO WORLD");
   int w = sr_BufferWidth(b), h = sr_BufferHeight(b);
   int depth = 32, pitch = 4 * w;
   SDL_Surface* m_graphics_surface = SDL_CreateRGBSurfaceWithFormatFrom((void *)b->pixels, w, h, depth, pitch, pxfmt);

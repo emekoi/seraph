@@ -14,6 +14,7 @@
 #define sr_BufferWidth(b) b->w
 #define sr_BufferHeight(b) b->h
 
+sr_Buffer *new_srBuffer(void);
 sr_Buffer *sr_BufferFile(const char *filename);
 sr_Buffer *sr_BufferString(const char *str);
 sr_Buffer *sr_BufferBlank(int w, int h);
