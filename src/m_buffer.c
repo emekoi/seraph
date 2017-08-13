@@ -12,46 +12,37 @@ sr_Buffer *new_srBuffer(void) {
 }
 
 
-static int sr_BufferMemory(sr_Buffer *b, const void *data, int len) {
+static sr_Buffer *sr_BufferMemory(const void *data, int len) {
   int w, h;
-  void *pixels = stbi_load_from_memory(
-    data, len, &w, &h, NULL, STBI_rgb_alpha);
-  if (!pixels) {
-    return -1;
-  }
-  b = sr_newBuffer(w, h);
+  void *pixels = stbi_load_from_memory(data, len, &w, &h, NULL, STBI_rgb_alpha);
+  if (!pixels) return NULL;
+  sr_Buffer *b = sr_newBuffer(w, h);
   if (!b) {
     zfree(pixels);
-    return -1;
+    return NULL;
   }
   sr_loadPixels(b, pixels, SR_FMT_RGBA);
   zfree(pixels);
-  return 0;
+  return b;
 }
 
 
 
 sr_Buffer *sr_BufferFile(const char *filename) {
-  sr_Buffer *b = new_srBuffer();
   size_t len;
   void *data = fs_read(filename, &len);
-  if (!data) {
-    CERROR("could not open file '%s'", filename);
-  }
-  int err = sr_BufferMemory(b, data, len);
+  if (!data) CERROR("could not open file '%s'", filename);
+  sr_Buffer *b = sr_BufferMemory(data, len);
   free(data);
-  if (err) {
-    CERROR("could not load buffer");
-  }
+  if (!b) CERROR("could not load buffer");
   return b;
 }
 
 
 sr_Buffer *sr_BufferString(const char *str) {
   size_t len = strlen(str);
-  sr_Buffer *b = new_srBuffer();
-  int err = sr_BufferMemory(b, str, len);
-  if (err) CERROR("could not load sr_Buffer");
+  sr_Buffer *b = sr_BufferMemory(str, len);
+  if (!b) CERROR("could not load sr_Buffer");
   return b;
 }
 

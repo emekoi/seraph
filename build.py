@@ -66,6 +66,7 @@ def main():
 
   # Make sure there arn't any temp files left over from a previous build
   clearup()
+  clearup()
 
   # Create directories
   os.makedirs(TEMPSRC_DIR)
@@ -107,6 +108,7 @@ def main():
       os.system("strip %s" % OUTPUT)
 
   print "clearing up..."
+  clearup()
   clearup()
 
   if res == 0:

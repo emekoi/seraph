@@ -85,9 +85,7 @@ sr_Buffer *font_render(Font *self, const char *str) {
   if (!str || *str == '\0') str = " ";
   sr_Buffer *b;
   void *data = ttf_render(self->font, str, &w, &h);
-  if (!data) {
-    CERROR("could not render text");
-  }
+  if (!data) CERROR("could not render text");
   /* Load bitmap and free intermediate 8bit bitmap */
   b = sr_newBuffer(w, h);
   if (!b) {
@@ -103,7 +101,7 @@ sr_Buffer *font_render(Font *self, const char *str) {
 void sr_DrawText(sr_Buffer *b, Font *font, const char *str, int x, int y, sr_Transform *t) {
   sr_Buffer *txt = font_render(font, str);
   sr_Rect r = RECT(txt);
-  sr_copyPixels(b, txt, x, y, &r, t ? t->sx : 0, t ? t->sy : 0);
+  sr_drawBuffer(b, txt, x, y, &r, t);
   sr_destroyBuffer(txt);
 }
 
