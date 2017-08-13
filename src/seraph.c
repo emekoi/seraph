@@ -28,6 +28,7 @@ sr_Buffer *hello;
 
 void onInit() {
   hello = sr_BufferFile("hello_world.png");
+  sr_drawBox(hello, sr_color(0, 140, 140), 0, 0, 128, 128);
   font = font_fromEmbedded(16);
   graphics_setClearColor(sr_color(69, 0, 109));
 }
@@ -35,9 +36,8 @@ void onInit() {
 void onDraw() {
   sr_Rect r0 = RECT(hello);
   sr_Transform t0 = sr_transform(0, 0, 0, 0, 0);
-  sr_drawBox(hello, sr_color(0, 140, 140), 0, 0, 128, 128);
   char buf[64]; sprintf(buf, "%d FPS", time_getFps());
-  sr_DrawText(hello, font, buf, 0, 0, &t0);
+  sr_DrawText(hello, font, sr_color(255, 255, 0), buf, 0, 0, &t0);
 
   /* Draw and reset the image buffer */
   sr_copyPixels(m_graphics_buffer, hello, 0, 0, &r0, 4, 4);

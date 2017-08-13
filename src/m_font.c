@@ -98,10 +98,12 @@ sr_Buffer *font_render(Font *self, const char *str) {
 }
 
 
-void sr_DrawText(sr_Buffer *b, Font *font, const char *str, int x, int y, sr_Transform *t) {
+void sr_DrawText(sr_Buffer *b, Font *font, sr_Pixel c, const char *str, int x, int y, sr_Transform *t) {
   sr_Buffer *txt = font_render(font, str);
   sr_Rect r = RECT(txt);
+  sr_setColor(b, c);
   sr_drawBuffer(b, txt, x, y, &r, t);
+  sr_reset(b);
   sr_destroyBuffer(txt);
 }
 
