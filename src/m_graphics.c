@@ -35,6 +35,7 @@ static void resetVideoMode(void) {
 
   m_graphics_renderer = SDL_CreateRenderer(m_graphics_window, -1, SDL_RENDERER_ACCELERATED);
   if (!m_graphics_renderer) CERROR("failed to create renderer");
+  // SDL_RenderSetLogicalSize(m_graphics_renderer, m_graphics_width, m_graphics_height);
 
   /* Reset screen buffer */
   if (m_graphics_buffer) {

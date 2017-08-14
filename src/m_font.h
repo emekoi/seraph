@@ -21,7 +21,7 @@ Font *font_fromString(const char *data, int fontsize);
 Font *font_fromEmbedded(int fontsize);
 int font_gc(Font *self);
 sr_Buffer *font_render(Font *self, const char *str);
-void sr_DrawText(sr_Buffer *b, Font *font, sr_Pixel c, const char *str, int x, int y, sr_Transform *t);
+void sr_drawText(sr_Buffer *b, Font *font, sr_Pixel c, const char *str, int x, int y, sr_Transform *t);
 int font_getWidth(Font *self, const char *str);
 int font_getHeight(Font *self);
 int font_getSize(Font *self);

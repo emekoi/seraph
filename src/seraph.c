@@ -34,13 +34,11 @@ void onInit() {
 }
 
 void onDraw() {
-  sr_Rect r0 = RECT(hello);
-  sr_Transform t0 = sr_transform(0, 0, 0, 0, 0);
-  char buf[64]; sprintf(buf, "%d FPS", time_getFps());
-  sr_DrawText(hello, font, sr_color(255, 255, 0), buf, 0, 0, &t0);
-
   /* Draw and reset the image buffer */
-  sr_copyPixels(m_graphics_buffer, hello, 0, 0, &r0, 4, 4);
+  sr_Transform t0 = sr_transform(0, 0, 0, 4, 4);
+  sr_drawBuffer(m_graphics_buffer, hello, 0, 0, NULL, &t0);
+  char buf[65]; sprintf(buf, "%d FPS", time_getFps());
+  sr_drawText(m_graphics_buffer, font, sr_color(200, 200, 200), buf, 8, 6, NULL);
 }
 
 void onQuit(void) {
@@ -76,9 +74,7 @@ void __init(void) {
 }
 
 void __draw(void) {
-  graphics_clear();
-  onDraw();
-
+  graphics_clear(); onDraw();
   sr_Buffer *b = m_graphics_buffer;
   int w = sr_BufferWidth(b), h = sr_BufferHeight(b);
   int depth = 32, pitch = 4 * w;
