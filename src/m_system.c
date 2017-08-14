@@ -14,9 +14,10 @@ void system_poll() {
   while (SDL_PollEvent(&e)) {
     switch (e.type) {
       case SDL_QUIT:
-        exit(EXIT_SUCCESS);
+        QUIT: exit(EXIT_SUCCESS);
         break;
-
+      case SDL_KEYUP:
+        if (e.key.keysym.sym == SDLK_ESCAPE) goto QUIT;
       case SDL_WINDOWEVENT: {
         switch (e.window.event) {
           case SDL_WINDOWEVENT_RESIZED:

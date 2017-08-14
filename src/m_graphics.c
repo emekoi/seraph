@@ -10,7 +10,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <float.h>
+
+#include <GL/glew.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
+
 #include "lib/sera/sera.h"
 #include "util.h"
 #include "m_graphics.h"
@@ -37,6 +41,7 @@ static void resetVideoMode(void) {
   if (!m_graphics_renderer) CERROR("failed to create renderer");
   // SDL_RenderSetLogicalSize(m_graphics_renderer, m_graphics_width, m_graphics_height);
 
+
   /* Reset screen buffer */
   if (m_graphics_buffer) {
     // m_graphics_buffer->pixels = (void *)m_graphics_surface->pixels;
@@ -55,8 +60,20 @@ void graphics_init(int w, int h, char *title, int fullscreen, int resizable) {
   if (m_graphics_inited) CERROR("graphics are already inited");
   if (SDL_Init(SDL_INIT_VIDEO) != 0) CERROR("could not init video");
 
+  /* Setup OpenGL */
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+  SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+
   /* Init SDL video */
   resetVideoMode();
+
+  /* Init GLEW */
+  glewExperimental = GL_TRUE;
+  glewInit(); GLuint vertexbuf;
+  glGenBuffers(1, &vertexbuf);
+  if (!vertexbuf) CERROR("failed to init GLEW");
 
   /* Init window title */
   SDL_SetWindowTitle(m_graphics_window, m_graphics_title);
@@ -66,6 +83,13 @@ void graphics_init(int w, int h, char *title, int fullscreen, int resizable) {
 
   /* Set state */
   m_graphics_inited = 1;
+}
+
+void graphics_close(void) {
+  sr_destroyBuffer(m_graphics_buffer);
+  SDL_GL_DeleteContext(m_graphics_context);
+  SDL_DestroyRenderer(m_graphics_renderer);
+  SDL_DestroyWindow(m_graphics_window);
 }
 
 

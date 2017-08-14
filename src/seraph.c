@@ -42,10 +42,8 @@ void onDraw() {
 }
 
 void onQuit(void) {
-  sr_destroyBuffer(m_graphics_buffer);
   sr_destroyBuffer(hello); font_gc(font);
-  SDL_DestroyRenderer(m_graphics_renderer);
-  SDL_DestroyWindow(m_graphics_window);
+  graphics_close();
   SDL_Quit(); fs_deinit();
 }
 

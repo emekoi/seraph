@@ -15,13 +15,13 @@ SOURCE = [
 
 FLAGS = [ "-Wall", "-Wextra", "--std=c99", "-fno-strict-aliasing", "-Wno-unused-function", "-Wno-misleading-indentation", "-Wno-unused-parameter" ]
 LINK = [ "m" ]
-DEFINE = [ ]
+DEFINE = [ "GLEW_STATIC" ]
 EXTRA = ""
 
 if platform.system() == "Windows":
   sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
   OUTPUT += ".exe"
-  LINK += [ "mingw32", "SDL2main", "SDL2" ]
+  LINK += [ "mingw32", "SDL2main", "SDL2", "opengl32", "glew32s" ]
   FLAGS += [ "-mwindows" ]
 
 if platform.system() == "Linux":

@@ -10,10 +10,12 @@
 #define M_GRAPHICS_H
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 #include "lib/sera/sera.h"
 
 SDL_Window *m_graphics_window;
-SDL_Renderer *m_graphics_renderer; 
+SDL_Renderer *m_graphics_renderer;
+SDL_GLContext m_graphics_context;
 sr_Buffer *m_graphics_buffer;
 
 int m_graphics_width;
@@ -21,6 +23,7 @@ int m_graphics_height;
 int m_graphics_maxFps;
 
 void graphics_init(int w, int h, char *title, int fullscreen, int resizable);
+void graphics_close(void);
 int graphics_clear(void);
 int graphics_setSize(int width, int height);
 sr_Pixel graphics_getClearColor(void);
