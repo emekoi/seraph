@@ -18,6 +18,7 @@ void system_poll() {
         break;
       case SDL_KEYUP:
         if (e.key.keysym.sym == SDLK_ESCAPE) goto QUIT;
+        break;
       case SDL_WINDOWEVENT: {
         switch (e.window.event) {
           case SDL_WINDOWEVENT_RESIZED:

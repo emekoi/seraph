@@ -28,7 +28,7 @@ int graphics_clear(void);
 int graphics_setSize(int width, int height);
 sr_Pixel graphics_getClearColor(void);
 int graphics_setClearColor(sr_Pixel color);
-int graphics_setFullscreen(int b);
+int graphics_setFullscreen(int f);
 int graphics_getFullscreen(void);
 int graphics_setMaxFps(int fps);
 int graphics_getMaxFps(void);

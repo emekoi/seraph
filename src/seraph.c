@@ -27,7 +27,7 @@ Font *font;
 sr_Buffer *hello;
 
 void onInit() {
-  hello = sr_BufferFile("hello_world.png");
+  hello = sr_newBufferFile("hello_world.png");
   sr_drawBox(hello, sr_color(0, 140, 140), 0, 0, 128, 128);
   font = font_fromEmbedded(16);
   graphics_setClearColor(sr_color(69, 0, 109));

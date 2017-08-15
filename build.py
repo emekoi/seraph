@@ -21,7 +21,7 @@ EXTRA = ""
 if platform.system() == "Windows":
   sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
   OUTPUT += ".exe"
-  LINK += [ "mingw32", "SDL2main", "SDL2", "opengl32", "glew32s" ]
+  LINK += [ "mingw32", "opengl32", "glew32", "SDL2main", "SDL2" ]
   FLAGS += [ "-mwindows" ]
 
 if platform.system() == "Linux":

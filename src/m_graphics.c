@@ -11,8 +11,9 @@
 #include <string.h>
 #include <float.h>
 
-#include <GL/glew.h>
 #include <SDL2/SDL.h>
+// #define GLEW_STATIC
+#include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
 
 #include "lib/sera/sera.h"
@@ -31,20 +32,19 @@ static sr_Pixel m_graphics_clearColor;
 static void resetVideoMode(void) {
   /* Reset video mode */
   int flags = (m_graphics_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0) |
-              (m_graphics_resizable  ? SDL_WINDOW_RESIZABLE : 0) | SDL_WINDOW_OPENGL;
+              (m_graphics_resizable  ? SDL_WINDOW_RESIZABLE : 0);
 
-  m_graphics_window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                        m_graphics_width, m_graphics_height, flags);
+  m_graphics_window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_graphics_width, m_graphics_height, (flags | SDL_WINDOW_OPENGL));
   if (!m_graphics_window) CERROR("failed to create window");
+
+  m_graphics_context = SDL_GL_CreateContext(m_graphics_window);
+  if (m_graphics_context == NULL) TRACE("failed to create context");
 
   m_graphics_renderer = SDL_CreateRenderer(m_graphics_window, -1, SDL_RENDERER_ACCELERATED);
   if (!m_graphics_renderer) CERROR("failed to create renderer");
-  // SDL_RenderSetLogicalSize(m_graphics_renderer, m_graphics_width, m_graphics_height);
-
 
   /* Reset screen buffer */
   if (m_graphics_buffer) {
-    // m_graphics_buffer->pixels = (void *)m_graphics_surface->pixels;
     m_graphics_buffer->w = m_graphics_width;
     m_graphics_buffer->h = m_graphics_height;
     sr_setClip(m_graphics_buffer, RECT(m_graphics_buffer));
@@ -58,15 +58,16 @@ void graphics_init(int w, int h, char *title, int fullscreen, int resizable) {
   m_graphics_fullscreen = opt_number(fullscreen, 0);
   m_graphics_resizable = opt_number(resizable, 0);
   if (m_graphics_inited) CERROR("graphics are already inited");
+
+  /* Init SDL video subsystem*/
   if (SDL_Init(SDL_INIT_VIDEO) != 0) CERROR("could not init video");
 
   /* Setup OpenGL */
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-  SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-  /* Init SDL video */
   resetVideoMode();
 
   /* Init GLEW */
@@ -75,11 +76,11 @@ void graphics_init(int w, int h, char *title, int fullscreen, int resizable) {
   glGenBuffers(1, &vertexbuf);
   if (!vertexbuf) CERROR("failed to init GLEW");
 
-  /* Init window title */
+  /* Set window title */
   SDL_SetWindowTitle(m_graphics_window, m_graphics_title);
+
   /* Create main screen buffer */
-  m_graphics_buffer = sr_newBuffer(m_graphics_width, m_graphics_height);
-  sr_clear(m_graphics_buffer, sr_color(0, 0, 0));
+  m_graphics_buffer = sr_newBufferBlank(m_graphics_width, m_graphics_height);
 
   /* Set state */
   m_graphics_inited = 1;
@@ -116,16 +117,15 @@ int graphics_setSize(int width, int height) {
   m_graphics_height = opt_number(height, m_graphics_height);
   sr_Buffer *b = m_graphics_buffer;
   if (b) {
-    b->w = m_graphics_width; b->h = m_graphics_height;
-    sr_setClip(b, RECT(b));
+    b->w = m_graphics_width; b->h = m_graphics_height; sr_setClip(b, RECT(b));
     b->pixels = realloc(b->pixels, b->w * b->h * sizeof(*b->pixels));
   }
   return 0;
 }
 
-int graphics_setFullscreen(int b) {
-  m_graphics_fullscreen = opt_number(b, m_graphics_fullscreen);
-  resetVideoMode();
+int graphics_setFullscreen(int f) {
+  m_graphics_fullscreen = f;
+  SDL_SetWindowFullscreen(m_graphics_window, f ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
   return 0;
 }
 
