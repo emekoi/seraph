@@ -38,16 +38,18 @@ static void resetVideoMode(void) {
   if (!m_graphics_window) CERROR("failed to create window");
 
   m_graphics_context = SDL_GL_CreateContext(m_graphics_window);
-  if (m_graphics_context == NULL) TRACE("failed to create context");
+  if (!m_graphics_context) TRACE("failed to create context");
 
   m_graphics_renderer = SDL_CreateRenderer(m_graphics_window, -1, SDL_RENDERER_ACCELERATED);
   if (!m_graphics_renderer) CERROR("failed to create renderer");
 
   /* Reset screen buffer */
-  if (m_graphics_buffer) {
-    m_graphics_buffer->w = m_graphics_width;
-    m_graphics_buffer->h = m_graphics_height;
-    sr_setClip(m_graphics_buffer, RECT(m_graphics_buffer));
+  sr_Buffer *buf = m_graphics_buffer;
+  if (buf) {
+    buf->w = m_graphics_width;
+    buf->h = m_graphics_height;
+    buf->pixels = realloc(buf->pixels, buf->w * buf->h * sizeof(*buf->pixels));
+    sr_setClip(buf, RECT(buf));
   }
 }
 

@@ -15,7 +15,7 @@ SOURCE = [
 
 FLAGS = [ "-Wall", "-Wextra", "--std=c99", "-fno-strict-aliasing", "-Wno-unused-function", "-Wno-misleading-indentation", "-Wno-unused-parameter" ]
 LINK = [ "m" ]
-DEFINE = [ "GLEW_STATIC" ]
+DEFINE = [  ] # DEFINE = [ "GLEW_STATIC" ]
 EXTRA = ""
 
 if platform.system() == "Windows":
@@ -25,13 +25,12 @@ if platform.system() == "Windows":
   FLAGS += [ "-mwindows" ]
 
 if platform.system() == "Linux":
-  LINK += [ "SDL2main", "SDL2" ]
+  LINK += [ "SDL2main", "SDL2", "GL", "GLEW"  ]
 
 if platform.system() == "Darwin":
-  LINK += [  ]
-  FLAGS += [  ]
+  LINK += [ "GLEW" ]
   FLAGS += [ os.popen("sdl2-config --cflags").read().strip() ]
-  EXTRA += os.popen("sdl2-config --libs").read().strip()
+  EXTRA += [ os.popen("sdl2-config --libs").read().strip(),  "-framework OpenGL"  ]
   DEFINE += [ "SR_MODE_ARGB" ]
 
 
