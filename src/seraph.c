@@ -90,11 +90,13 @@ void __draw(void) {
   /* Wait for next frame */
   static double last = 0;
   double step = (1. / m_graphics_maxFps);
-  double now = SDL_GetTicks() / 1000.;
+  double now = time_getTime();
+  // double now = SDL_GetTicks() / 1000.;
   double wait = step - (now - last);
   last += step;
   if (wait > 0) {
-    SDL_Delay(wait * 1000.);
+    // SDL_Delay(wait * 1000.);
+    time_sleep(wait);
   } else {
     last = now;
   }

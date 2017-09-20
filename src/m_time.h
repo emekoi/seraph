@@ -9,9 +9,9 @@
 #ifndef M_TIME_H
 #define M_TIME_H
 
-int time_getNow(void);
-int time_getTime(void);
-int time_sleep(int t);
+double time_getNow(void);
+double time_getTime(void);
+int time_sleep(double t);
 void time_step(void);
 double time_getDelta(void);
 double time_getAverage(void);

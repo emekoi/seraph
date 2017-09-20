@@ -5,6 +5,7 @@
  * under the terms of the MIT license. See LICENSE for details.
  */
 
+#include <stdio.h>
 #include <SDL2/SDL.h>
 #include <math.h>
 #include "m_time.h"
@@ -23,7 +24,7 @@ static double m_time_avgAcc = 1;
 static double m_time_avgCount = 1;
 
 
-int time_getNow(void) {
+double time_getNow(void) {
   double t;
 #ifdef _WIN32
   FILETIME ft;
@@ -39,12 +40,14 @@ int time_getNow(void) {
 }
 
 
-int time_getTime(void) {
+double time_getTime(void) {
+  // printf("TIME: %f\n", SDL_GetTicks() / 1000.);
   return SDL_GetTicks() / 1000.;
 }
 
 
-int time_sleep(int t) {
+int time_sleep(double t) {
+  // printf("SLEEP: %f\n", t);
   SDL_Delay(t * 1000.);
   return 0;
 }

@@ -16,7 +16,7 @@ SOURCE = [
 FLAGS = [ "-Wall", "-Wextra", "--std=c99", "-fno-strict-aliasing", "-Wno-unused-function", "-Wno-misleading-indentation", "-Wno-unused-parameter" ]
 LINK = [ "m" ]
 DEFINE = [  ] # DEFINE = [ "GLEW_STATIC" ]
-EXTRA = ""
+EXTRA = [  ]
 
 if platform.system() == "Windows":
   sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
@@ -92,7 +92,7 @@ def main():
       "link"      : " ".join(map(lambda x:"-l" + x, LINK)),
       "define"    : " ".join(map(lambda x:"-D" + x, DEFINE)),
       "flags"     : " ".join(FLAGS),
-      "extra"     : EXTRA,
+      "extra"     : " ".join(EXTRA),
     })
 
   if verbose:
