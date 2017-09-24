@@ -11,24 +11,24 @@ SOURCE = [
   "src/*.c",
   "src/lib/fs/*.c",
   "src/lib/sera/*.c",
+  "src/lib/glew/glew.c",
 ]
 
 FLAGS = [ "-Wall", "-Wextra", "--std=c99", "-fno-strict-aliasing", "-Wno-unused-function", "-Wno-misleading-indentation", "-Wno-unused-parameter" ]
 LINK = [ "m" ]
-DEFINE = [  ] # DEFINE = [ "GLEW_STATIC" ]
+DEFINE = [ "GLEW_STATIC" ]
 EXTRA = [  ]
 
 if platform.system() == "Windows":
   sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
   OUTPUT += ".exe"
-  LINK += [ "mingw32", "opengl32", "glew32", "SDL2main", "SDL2" ]
+  LINK += [ "mingw32", "opengl32", "SDL2main", "SDL2" ]
   FLAGS += [ "-mwindows" ]
 
 if platform.system() == "Linux":
-  LINK += [ "SDL2main", "SDL2", "GL", "GLEW"  ]
+  LINK += [ "SDL2main", "SDL2", "GL" ]
 
 if platform.system() == "Darwin":
-  LINK += [ "GLEW" ]
   FLAGS += [ os.popen("sdl2-config --cflags").read().strip() ]
   EXTRA += [ os.popen("sdl2-config --libs").read().strip(),  "-framework OpenGL"  ]
   DEFINE += [ "SR_MODE_ARGB" ]

@@ -10,7 +10,7 @@
 #define M_GRAPHICS_H
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
+// #include <SDL2/SDL_opengl.h>
 #include "lib/sera/sera.h"
 
 SDL_Window *m_graphics_window;

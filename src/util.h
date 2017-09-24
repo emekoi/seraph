@@ -13,13 +13,10 @@
 #include <stdio.h>
 #include "m_buffer.h"
 
-#define ASSERT(cond, ...) do { \
-  if (!(cond)) { \
-    fprintf(stderr, "[ASSERT FAILED]:%s %s:%d: %s(): ", #cond, __FILE__, __LINE__, __func__); \
+#define ERROR(...) do { \
   fprintf(stderr, __VA_ARGS__); \
   fprintf(stderr, "\n"); \
   exit(EXIT_FAILURE); \
-  } \
 } while(0);
 
 #define CERROR(...) do { \

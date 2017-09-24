@@ -13,8 +13,8 @@
 
 #include <SDL2/SDL.h>
 // #define GLEW_STATIC
-#include <GL/glew.h>
-#include <SDL2/SDL_opengl.h>
+// #include <GL/glew.h>
+// #include <SDL2/SDL_opengl.h>
 
 #include "lib/sera/sera.h"
 #include "util.h"
@@ -73,10 +73,10 @@ void graphics_init(int w, int h, char *title, int fullscreen, int resizable) {
   resetVideoMode();
 
   /* Init GLEW */
-  glewExperimental = GL_TRUE;
-  glewInit(); GLuint vertexbuf;
-  glGenBuffers(1, &vertexbuf);
-  if (!vertexbuf) CERROR("failed to init GLEW");
+  // glewExperimental = GL_TRUE;
+  // glewInit(); GLuint vertexbuf;
+  // glGenBuffers(1, &vertexbuf);
+  // if (!vertexbuf) CERROR("failed to init GLEW");
 
   /* Set window title */
   SDL_SetWindowTitle(m_graphics_window, m_graphics_title);
