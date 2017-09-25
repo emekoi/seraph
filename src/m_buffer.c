@@ -1,13 +1,21 @@
+/**
+ * Copyright (c) 2017 emekoi
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the MIT license. See LICENSE for details.
+ */
+
+
 #include <stdlib.h>
 #define STB_IMAGE_IMPLEMENTATION
-#include "lib/stb_image.h"
-#include "lib/sera/sera.h"
+#include "stb_image.h"
+#include "sera/sera.h"
+#include "fs/fs.h"
 #include "util.h"
-#include "lib/fs/fs.h"
 
 
 sr_Buffer *new_srBuffer(void) {
-  sr_Buffer *b = zrealloc(NULL, sizeof(*b));
+  sr_Buffer *b = calloc(1, sizeof(*b));
   return b;
 }
 
@@ -18,11 +26,11 @@ static sr_Buffer *sr_BufferMemory(const void *data, int len) {
   if (!pixels) return NULL;
   sr_Buffer *b = sr_newBuffer(w, h);
   if (!b) {
-    zfree(pixels);
+    free(pixels);
     return NULL;
   }
   sr_loadPixels(b, pixels, SR_FMT_RGBA);
-  zfree(pixels);
+  free(pixels);
   return b;
 }
 

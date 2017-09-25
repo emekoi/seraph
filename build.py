@@ -6,7 +6,7 @@ OUTPUT = "bin/seraph"
 EMBED_DIR = "src/embed"
 TEMPSRC_DIR = ".tempsrc"
 COMPILER = "gcc"
-INCLUDE = [ TEMPSRC_DIR ]
+INCLUDE = [ "src/lib", TEMPSRC_DIR ]
 SOURCE = [
   "src/*.c",
   "src/lib/fs/*.c",
@@ -52,7 +52,7 @@ def main():
   starttime = time.time()
 
   # Handle args
-  build = "debug" if "debug" in sys.argv else "release"
+  build = "release" if "release" in sys.argv else "debug"
   verbose = "verbose" in sys.argv
 
   # Handle build type

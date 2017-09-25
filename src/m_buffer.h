@@ -9,10 +9,7 @@
 #ifndef M_BUFFER_H
 #define M_BUFFER_H
 
-#include "lib/sera/sera.h"
-
-#define sr_BufferWidth(b) b->w
-#define sr_BufferHeight(b) b->h
+#include "sera/sera.h"
 
 sr_Buffer *new_srBuffer(void);
 sr_Buffer *sr_newBufferFile(const char *filename);

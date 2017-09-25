@@ -1,13 +1,12 @@
 #version 120
 
-uniform vec2 position;
+attribute vec2 position;
+attribute vec3 color;
 
-vec2 radialDistortion(vec2 coord) {
-  vec2 cc = coord - 0.5;
-  float dist = dot(cc, cc) * .2;
-  return (coord + cc * (1.0 + dist) * dist);
-}
+varying vec3 Color;
 
 void main() {
-  gl_Position = vec4(radialDistortion(position), 0.0, 1.0);
+  Color = color;
+  gl_Position = vec4(position, 1.0, 1.0);
+  // Texcoord = textcoord;
 }

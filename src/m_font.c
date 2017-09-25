@@ -9,17 +9,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <SDL/SDL.h>
 #include "util.h"
 #include "m_font.h"
-#include "lib/fs/fs.h"
-#include "lib/sera/sera.h"
+#include "fs/fs.h"
+#include "sera/sera.h"
 
 #define DEFAULT_FONTSIZE 14
 
 
 static Font *newFont() {
-  Font *self = zrealloc(NULL, sizeof(*self));
+  Font *self = calloc(1, sizeof(*self));
   return self;
 }
 
@@ -36,7 +35,7 @@ static const char *loadFontFromMemory(
 
 
 Font *font_fromFile(const char *filename, int fontsize) {
-  fontsize = opt_number(fontsize, DEFAULT_FONTSIZE);
+  fontsize = (fontsize ? fontsize : DEFAULT_FONTSIZE);
   Font *self = newFont();
   size_t len;
   void *data = fs_read(filename, &len);
@@ -53,7 +52,7 @@ Font *font_fromFile(const char *filename, int fontsize) {
 
 Font *font_fromString(const char *data, int fontsize) {
   size_t len = strlen(data);
-  fontsize = opt_number(fontsize, DEFAULT_FONTSIZE);
+  fontsize = (fontsize ? fontsize : DEFAULT_FONTSIZE);
   Font *self = newFont();
   const char *err = loadFontFromMemory(self, data, len, fontsize);
   if (err) CERROR("%s", err);
@@ -63,7 +62,7 @@ Font *font_fromString(const char *data, int fontsize) {
 
 Font *font_fromEmbedded(int fontsize) {
   #include "default_ttf.h"
-  fontsize = opt_number(fontsize, DEFAULT_FONTSIZE);
+  fontsize = (fontsize ? fontsize : DEFAULT_FONTSIZE);
   Font *self = newFont();
   const char *err = loadFontFromMemory(self, default_ttf, sizeof(default_ttf),
                                        fontsize);
@@ -72,7 +71,7 @@ Font *font_fromEmbedded(int fontsize) {
 }
 
 
-int font_gc(Font *self) {
+int font_destroy(Font *self) {
   if (self->font) {
     ttf_destroy(self->font);
   }

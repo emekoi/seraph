@@ -9,7 +9,7 @@
 #ifndef TTF_H
 #define TTF_H
 
-#include "lib/stb_truetype.h"
+#include "stb_truetype.h"
 
 typedef struct {
   stbtt_fontinfo font;

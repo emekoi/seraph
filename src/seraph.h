@@ -10,6 +10,7 @@
 #define M_SERAPH_H
 
 #include <SDL2/SDL.h>
+#include "glew/glew.h"
 
 #include "util.h"
 
@@ -17,6 +18,7 @@
 #include "m_font.h"
 #include "m_system.h"
 #include "m_buffer.h"
+#include "m_shader.h"
 #include "m_graphics.h"
 
 void __init(void);

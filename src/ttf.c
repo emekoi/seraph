@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include "ttf.h"
 #define STB_TRUETYPE_IMPLEMENTATION
-#include "lib/stb_truetype.h"
+#include "stb_truetype.h"
 
 /* ttf.c/h provides some higher level functionality around `stb_truetype` --
  * most importantly it provides a function which takes a string and a font and
@@ -52,8 +52,10 @@ fail:
 
 
 void ttf_destroy(ttf_Font *self) {
-  free(self->fontData);
-  free(self);
+  if (self) {
+    free(self->fontData);
+    free(self);
+  }
 }
 
 

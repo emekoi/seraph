@@ -11,7 +11,7 @@
 
 #include <SDL2/SDL.h>
 // #include <SDL2/SDL_opengl.h>
-#include "lib/sera/sera.h"
+#include "sera/sera.h"
 
 SDL_Window *m_graphics_window;
 SDL_Renderer *m_graphics_renderer;

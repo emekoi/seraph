@@ -12,11 +12,10 @@
 #include <float.h>
 
 #include <SDL2/SDL.h>
-// #define GLEW_STATIC
-// #include <GL/glew.h>
+#include "glew/glew.h"
 // #include <SDL2/SDL_opengl.h>
 
-#include "lib/sera/sera.h"
+#include "sera/sera.h"
 #include "util.h"
 #include "m_graphics.h"
 
@@ -38,7 +37,7 @@ static void resetVideoMode(void) {
   if (!m_graphics_window) CERROR("failed to create window");
 
   m_graphics_context = SDL_GL_CreateContext(m_graphics_window);
-  if (!m_graphics_context) TRACE("failed to create context");
+  if (!m_graphics_context) CERROR("failed to create context");
 
   m_graphics_renderer = SDL_CreateRenderer(m_graphics_window, -1, SDL_RENDERER_ACCELERATED);
   if (!m_graphics_renderer) CERROR("failed to create renderer");
@@ -56,9 +55,9 @@ static void resetVideoMode(void) {
 
 void graphics_init(int w, int h, char *title, int fullscreen, int resizable) {
   m_graphics_width = w; m_graphics_height = h;
-  m_graphics_title = opt_string(title, "seraph");
-  m_graphics_fullscreen = opt_number(fullscreen, 0);
-  m_graphics_resizable = opt_number(resizable, 0);
+  m_graphics_title = (title ? title : "seraph");
+  m_graphics_fullscreen = (fullscreen ? fullscreen : 0);
+  m_graphics_resizable = (resizable ? resizable : 0);
   if (m_graphics_inited) CERROR("graphics are already inited");
 
   /* Init SDL video subsystem*/
@@ -73,10 +72,12 @@ void graphics_init(int w, int h, char *title, int fullscreen, int resizable) {
   resetVideoMode();
 
   /* Init GLEW */
-  // glewExperimental = GL_TRUE;
-  // glewInit(); GLuint vertexbuf;
-  // glGenBuffers(1, &vertexbuf);
-  // if (!vertexbuf) CERROR("failed to init GLEW");
+  glewExperimental = GL_TRUE;
+  glewInit(); GLuint vertexbuf;
+  glGenBuffers(1, &vertexbuf);
+  if (!vertexbuf) CERROR("failed to init GLEW");
+
+  printf("OpenGL %s, GLSL %s\n", glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
 
   /* Set window title */
   SDL_SetWindowTitle(m_graphics_window, m_graphics_title);
@@ -108,6 +109,7 @@ sr_Pixel graphics_getClearColor(void) {
 
 
 int graphics_clear(void) {
+  glClear(GL_COLOR_BUFFER_BIT);
   sr_clear(m_graphics_buffer, m_graphics_clearColor);
   sr_reset(m_graphics_buffer);
   return 0;
@@ -115,8 +117,8 @@ int graphics_clear(void) {
 
 
 int graphics_setSize(int width, int height) {
-  m_graphics_width = opt_number(width, m_graphics_width);
-  m_graphics_height = opt_number(height, m_graphics_height);
+  m_graphics_width = (width ? width : m_graphics_width);
+  m_graphics_height = (height ? height : m_graphics_height);
   sr_Buffer *b = m_graphics_buffer;
   if (b) {
     b->w = m_graphics_width; b->h = m_graphics_height; sr_setClip(b, RECT(b));
@@ -136,7 +138,7 @@ int graphics_getFullscreen(void) {
 }
 
 int graphics_setMaxFps(int fps) {
-  m_graphics_maxFps = opt_number(fps, m_graphics_maxFps);
+  m_graphics_maxFps = (fps ? fps : m_graphics_maxFps);
   return 0;
 }
 
