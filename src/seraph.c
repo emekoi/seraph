@@ -5,6 +5,9 @@
  * under the terms of the MIT license. See LICENSE for details.
  */
 
+// https://wiki.libsdl.org/SDL_GL_BindTexture
+// http://www.sdltutorials.com/sdl-tip-sdl-surface-to-opengl-texture
+// https://open.gl/textures
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -113,6 +116,8 @@ void __draw(void) {
   // SDL_RenderCopy(m_graphics_renderer, m_graphics_texture, NULL, NULL);
   // SDL_RenderPresent(m_graphics_renderer);
   // SDL_DestroyTexture(m_graphics_texture);
+  
+//   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, b->w, b->h, 0, GL_RGB, GL_UNSIGNED_BYTE, b->pixels);
 
   SDL_GL_SwapWindow(m_graphics_window);
 
