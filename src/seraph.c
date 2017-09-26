@@ -45,13 +45,13 @@ void onInit() {
   glGenBuffers(1, &vbo);
 
   // crates two upside-down side by side views
+  sr_Buffer *b = m_graphics_buffer;
   float vertices[] = {
-  //  Position      Color             Texcoords
-  -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Top-left
-  1.0f,  1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // Top-right
-  1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // Bottom-right
-  -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,  // Bottom-left
-
+  //  Position  Color             Texcoords
+    -1.0f, -1.0f, 1.0f, 1.0f, 1.0f,  (b->w * 1.0f), 0.0f,  // Bottom-left
+     1.0f, -1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f, // Bottom-right
+    -1.0f,  1.0f, 1.0f, 0.0f, 0.0f,  (b->w * 1.0f), (b->h * 1.0f), // Top-left
+     1.0f,  1.0f, 0.0f, 1.0f, 0.0f,  0.0f, (b->h * 1.0f), // Top-right
   };
 
   // float vertices[] = {
@@ -69,7 +69,7 @@ void onInit() {
   glGenBuffers(1, &ebo);
 
   GLuint elements[] = {
-    0, 1, 2, 3
+    0, 1, 2, 3,
     // 2, 3, 0
   };
 
@@ -126,7 +126,7 @@ int main(int argc, char **argv) {
 void __init(void) {
   int width = 512, height = 512;
   SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
-  graphics_init(width, height, "seraph", 0, 0);
+  graphics_init(width, height, "seraph", 1, 0);
   graphics_setMaxFps(60); fs_error(fs_mount("data"));
   onInit();
 }
@@ -150,6 +150,8 @@ void __draw(void) {
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 

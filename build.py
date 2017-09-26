@@ -24,6 +24,7 @@ if platform.system() == "Windows":
   OUTPUT += ".exe"
   LINK += [ "mingw32", "SDL2main", "SDL2", "opengl32" ]
   FLAGS += [ "-mwindows" ]
+  DEFINE += [ "SR_MODE_RGBA" ]
 
 if platform.system() == "Linux":
   LINK += [ "SDL2main", "SDL2", "GL" ]
