@@ -11,6 +11,7 @@
 
 #include <SDL2/SDL.h>
 #include "glew/glew.h"
+#include "fs/fs.h"
 
 #include "util.h"
 

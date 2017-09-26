@@ -72,7 +72,7 @@ Font *font_fromEmbedded(int fontsize) {
 
 
 int font_destroy(Font *self) {
-  if (self->font) {
+  if (self && self->font) {
     ttf_destroy(self->font);
   }
   return 0;

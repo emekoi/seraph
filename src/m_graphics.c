@@ -37,7 +37,7 @@ static void resetVideoMode(void) {
   if (!m_graphics_window) CERROR("failed to create window");
 
   m_graphics_context = SDL_GL_CreateContext(m_graphics_window);
-  if (!m_graphics_context) CERROR("failed to create context");
+  // if (!m_graphics_context) TRACE("failed to create context: %s", SDL_GetError());
 
   m_graphics_renderer = SDL_CreateRenderer(m_graphics_window, -1, SDL_RENDERER_ACCELERATED);
   if (!m_graphics_renderer) CERROR("failed to create renderer");
@@ -64,10 +64,11 @@ void graphics_init(int w, int h, char *title, int fullscreen, int resizable) {
   if (SDL_Init(SDL_INIT_VIDEO) != 0) CERROR("could not init video");
 
   /* Setup OpenGL */
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+  // SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
   resetVideoMode();
 
@@ -77,7 +78,10 @@ void graphics_init(int w, int h, char *title, int fullscreen, int resizable) {
   glGenBuffers(1, &vertexbuf);
   if (!vertexbuf) CERROR("failed to init GLEW");
 
-  printf("OpenGL %s, GLSL %s\n", glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_CULL_FACE);
+
+  TRACE("OpenGL %s, GLSL %s", glGetString(GL_VERSION), glGetString(GL_SHADING_LANGUAGE_VERSION));
 
   /* Set window title */
   SDL_SetWindowTitle(m_graphics_window, m_graphics_title);
@@ -109,7 +113,8 @@ sr_Pixel graphics_getClearColor(void) {
 
 
 int graphics_clear(void) {
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   sr_clear(m_graphics_buffer, m_graphics_clearColor);
   sr_reset(m_graphics_buffer);
   return 0;

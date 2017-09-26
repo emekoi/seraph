@@ -189,10 +189,12 @@ sr_Buffer *sr_cloneBuffer(sr_Buffer *src) {
 
 
 void sr_destroyBuffer(sr_Buffer *b) {
-  if (~b->flags & SR_BUFFER_SHARED) {
-    free(b->pixels);
+  if (b) {
+    if (~b->flags & SR_BUFFER_SHARED) {
+      free(b->pixels);
+    }
+    free(b);
   }
-  free(b);
 }
 
 

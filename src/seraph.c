@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "fs/fs.h"
 #include "seraph.h"
 
 #if SR_MODE_RGBA
@@ -30,50 +29,81 @@ Font *font;
 sr_Buffer *hello;
 Shader *shader;
 
+GLuint vao, vbo, ebo;
+
 void onInit() {
   hello = sr_newBufferFile("hello_world.png");
   sr_drawBox(hello, sr_color(0, 140, 140), 0, 0, 128, 128);
   font = font_fromEmbedded(16);
-  graphics_setClearColor(sr_color(69, 0, 109));
+  graphics_setClearColor(sr_color(69, 100, 109));
 
-
-float vertices[] = {
-   0.0f,  0.5f, 1.0f, 0.0f, 0.0f, // Vertex 1: Red
-   0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // Vertex 2: Green
-  -0.5f, -0.5f, 0.0f, 0.0f, 1.0f  // Vertex 3: Blue
-};
-
-  GLuint vao;
+  // Create Vertex Array Object
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  GLuint vbo;
-  glGenBuffers(1, &vbo); // Generate 1 buffer
+  // Create a Vertex Buffer Object and copy the vertex data to it
+  glGenBuffers(1, &vbo);
+
+  // crates two upside-down side by side views
+  float vertices[] = {
+  //  Position      Color             Texcoords
+  -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Top-left
+  1.0f,  1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, // Top-right
+  1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // Bottom-right
+  -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,  // Bottom-left
+
+  };
+
+  // float vertices[] = {
+  // //  Position      Color             Texcoords
+  // -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
+  // 1.0f,  1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
+  // 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
+  // -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,  // Bottom-left
+  //
+  // };
+
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+  glGenBuffers(1, &ebo);
+
+  GLuint elements[] = {
+    0, 1, 2, 3
+    // 2, 3, 0
+  };
+
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
   shader = shader_fromFile("vert.glsl", "frag.glsl");
   shader_use(shader);
 
-  shader_setAttribute(shader, "position", 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), 0);
-  shader_setAttribute(shader, "color", 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(2*sizeof(float)));
+  shader_setAttribute(shader, "position_in", 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
+  shader_setAttribute(shader, "color_in", 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(2 * sizeof(float)));
+  shader_setAttribute(shader, "tex_coord_in", 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
 }
 
 void onDraw() {
   /* Draw and reset the image buffer */
-  // sr_Transform t0 = sr_transform(0, 0, 0, 4, 4);
-  // sr_drawBuffer(m_graphics_buffer, hello, 0, 0, NULL, &t0);
-  // char buf[65]; sprintf(buf, "%d FPS", time_getFps());
-  // sr_drawText(m_graphics_buffer, font, sr_color(200, 200, 200), buf, 8, 6, NULL);
-  
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  sr_Transform t0 = sr_transform(0, 0, 0, 4, 4);
+  sr_drawBuffer(m_graphics_buffer, hello, 0, 0, NULL, &t0);
+  char buf[65]; sprintf(buf, "%d FPS", time_getFps());
+  sr_drawText(m_graphics_buffer, font, sr_color(200, 200, 200), buf, 8, 6, NULL);
 }
 
 void onQuit(void) {
-  sr_destroyBuffer(hello); 
+  sr_destroyBuffer(hello);
   font_destroy(font);
   graphics_close();
   shader_destroy(shader);
+
+  glDeleteBuffers(1, &ebo);
+  glDeleteBuffers(1, &vbo);
+
+  glDeleteVertexArrays(1, &vao);
+
   SDL_Quit(); fs_deinit();
 }
 
@@ -104,20 +134,28 @@ void __init(void) {
 void __draw(void) {
   graphics_clear(); onDraw();
   sr_Buffer *b = m_graphics_buffer;
-  // int w = b->w, h = b->h;
-  // int depth = 32, pitch = 4 * w;
-  // SDL_Surface* m_graphics_surface = SDL_CreateRGBSurfaceWithFormatFrom((void *)b->pixels, w, h, depth, pitch, pxfmt);
-  // if (!m_graphics_surface) CERROR("failed to create surface: %s", SDL_GetError());
+  int depth = 32, pitch = 4 * b->w;
+  SDL_Surface *m_graphics_surface = SDL_CreateRGBSurfaceWithFormatFrom((void *)b->pixels, b->w, b->h, depth, pitch, pxfmt);
+  if (!m_graphics_surface) CERROR("failed to create surface: %s", SDL_GetError());
 
-  // SDL_Texture *m_graphics_texture = SDL_CreateTextureFromSurface(m_graphics_renderer, m_graphics_surface);
-  // if (!m_graphics_texture) CERROR("failed to create texture: %s", SDL_GetError());
-  // SDL_FreeSurface(m_graphics_surface);
+  GLuint tex;
+  glGenTextures(1, &tex);
+  glBindTexture(GL_TEXTURE_2D, tex);
 
-  // SDL_RenderCopy(m_graphics_renderer, m_graphics_texture, NULL, NULL);
-  // SDL_RenderPresent(m_graphics_renderer);
-  // SDL_DestroyTexture(m_graphics_texture);
-  
-//   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, b->w, b->h, 0, GL_RGB, GL_UNSIGNED_BYTE, b->pixels);
+  int mode = m_graphics_surface->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB;
+
+  glTexImage2D(GL_TEXTURE_2D, 0, mode, b->w, b->h, 0, mode, GL_UNSIGNED_BYTE, m_graphics_surface->pixels);
+
+  SDL_FreeSurface(m_graphics_surface);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+  glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, 0);
+
+  glDeleteTextures(1, &tex);
 
   SDL_GL_SwapWindow(m_graphics_window);
 
@@ -125,15 +163,11 @@ void __draw(void) {
   static double last = 0;
   double step = (1. / m_graphics_maxFps);
   double now = time_getTime();
-  // double now = SDL_GetTicks() / 1000.;
   double wait = step - (now - last);
   last += step;
   if (wait > 0) {
-    // SDL_Delay(wait * 1000.);
     time_sleep(wait);
   } else {
-    /* stops flahing when drawing only once */
-    /* SDL_GL_SwapWindow(m_graphics_window); */
     last = now;
   }
 }
