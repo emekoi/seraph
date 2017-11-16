@@ -70,13 +70,13 @@ void time_step(void) {
 }
 
 
-double time_get_delta(void) {
+double time_getDelta(void) {
   return m_time_delta;
 }
 
 
 
-double time_get_average(void){
+double time_getAverage(void){
   return m_time_average;
 }
 

@@ -13,8 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "seraph.h"
-// #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
 #if SR_MODE_RGBA
   #define pxfmt SDL_PIXELFORMAT_RGBA32
@@ -84,7 +82,7 @@ void onDraw() {
   sr_drawText(m_graphics_buffer, font, sr_color(200, 200, 200), buf, 8, 6, NULL);
 
   GLint uniform = glGetUniformLocation(shader->program, "elapsed");
-  glUniform1f(uniform, time_getTime());
+  glUniform1f(uniform, time_getDelta());
 }
 
 void onQuit(void) {
