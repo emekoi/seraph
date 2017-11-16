@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "seraph.h"
+// #define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 #if SR_MODE_RGBA
   #define pxfmt SDL_PIXELFORMAT_RGBA32
@@ -28,8 +30,8 @@ float bx = 0, by = 0;
 Font *font;
 sr_Buffer *hello;
 Shader *shader;
-
 GLuint vao, vbo, ebo;
+
 
 void onInit() {
   hello = sr_newBufferFile("hello_world.png");
@@ -44,24 +46,13 @@ void onInit() {
   // Create a Vertex Buffer Object and copy the vertex data to it
   glGenBuffers(1, &vbo);
 
-  // crates two upside-down side by side views
-  sr_Buffer *b = m_graphics_buffer;
   float vertices[] = {
-  //  Position  Color             Texcoords
-    -1.0f, -1.0f, 1.0f, 1.0f, 1.0f,  (b->w * 1.0f), 0.0f,  // Bottom-left
-     1.0f, -1.0f, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f, // Bottom-right
-    -1.0f,  1.0f, 1.0f, 0.0f, 0.0f,  (b->w * 1.0f), (b->h * 1.0f), // Top-left
-     1.0f,  1.0f, 0.0f, 1.0f, 0.0f,  0.0f, (b->h * 1.0f), // Top-right
+  //  Position  Color          Texcoords
+  -1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // Top-left
+   1.0f,  1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f, // Top-right
+   1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
+  -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, // Bottom-left
   };
-
-  // float vertices[] = {
-  // //  Position      Color             Texcoords
-  // -1.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
-  // 1.0f,  1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
-  // 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
-  // -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,  // Bottom-left
-  //
-  // };
 
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
@@ -69,8 +60,8 @@ void onInit() {
   glGenBuffers(1, &ebo);
 
   GLuint elements[] = {
-    0, 1, 2, 3,
-    // 2, 3, 0
+    0, 1, 2,
+    2, 3, 0,
   };
 
 
@@ -80,9 +71,9 @@ void onInit() {
   shader = shader_fromFile("vert.glsl", "frag.glsl");
   shader_use(shader);
 
-  shader_setAttribute(shader, "position_in", 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
-  shader_setAttribute(shader, "color_in", 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(2 * sizeof(float)));
-  shader_setAttribute(shader, "tex_coord_in", 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+  shader_setAttribute(shader, "position_in",  2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
+  shader_setAttribute(shader, "color_in",     3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(2 * sizeof(float)));
+  shader_setAttribute(shader, "tex_coord_in", 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(5 * sizeof(float)));
 }
 
 void onDraw() {
@@ -91,6 +82,9 @@ void onDraw() {
   sr_drawBuffer(m_graphics_buffer, hello, 0, 0, NULL, &t0);
   char buf[65]; sprintf(buf, "%d FPS", time_getFps());
   sr_drawText(m_graphics_buffer, font, sr_color(200, 200, 200), buf, 8, 6, NULL);
+
+  GLint uniform = glGetUniformLocation(shader->program, "elapsed");
+  glUniform1f(uniform, time_getTime());
 }
 
 void onQuit(void) {
@@ -126,7 +120,7 @@ int main(int argc, char **argv) {
 void __init(void) {
   int width = 512, height = 512;
   SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
-  graphics_init(width, height, "seraph", 1, 0);
+  graphics_init(width, height, "seraph", 0, 0);
   graphics_setMaxFps(60); fs_error(fs_mount("data"));
   onInit();
 }
@@ -155,7 +149,7 @@ void __draw(void) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-  glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, 0);
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
   glDeleteTextures(1, &tex);
 
