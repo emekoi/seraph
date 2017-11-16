@@ -126,19 +126,12 @@ void __init(void) {
 void __draw(void) {
   graphics_clear(); onDraw();
   sr_Buffer *b = m_graphics_buffer;
-  int depth = 32, pitch = 4 * b->w;
-  SDL_Surface *m_graphics_surface = SDL_CreateRGBSurfaceWithFormatFrom((void *)b->pixels, b->w, b->h, depth, pitch, pxfmt);
-  if (!m_graphics_surface) CERROR("failed to create surface: %s", SDL_GetError());
 
   GLuint tex;
   glGenTextures(1, &tex);
   glBindTexture(GL_TEXTURE_2D, tex);
 
-  int mode = m_graphics_surface->format->BytesPerPixel == 4 ? GL_RGBA : GL_RGB;
-
-  glTexImage2D(GL_TEXTURE_2D, 0, mode, b->w, b->h, 0, mode, GL_UNSIGNED_BYTE, m_graphics_surface->pixels);
-
-  SDL_FreeSurface(m_graphics_surface);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, b->w, b->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, b->pixels);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
